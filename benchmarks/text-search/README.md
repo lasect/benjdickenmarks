@@ -8,7 +8,16 @@ Comparing PostgreSQL text search tools and external search engines.
 cd benchmarks/text-search
 make up
 make install-extensions
+
+# Run benchmarks (uses synthetic data by default)
+go run cmd/bench/main.go
 ```
+
+## Data
+
+- **Wikipedia**: Downloaded to `data/wikipedia.parquet` (~770K articles, 76MB)
+- **Ecommerce**: Use synthetic generator (or download sample from `./scripts/download_ecommerce.sh`)
+- **Q&A**: Use synthetic generator (or download from `./scripts/download_stackoverflow.sh`)
 
 ## Tools Benchmarked
 
