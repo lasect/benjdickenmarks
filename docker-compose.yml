@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: benchmark-postgres
+    environment:
+      POSTGRES_USER: benchmark
+      POSTGRES_PASSWORD: benchmark
+      POSTGRES_DB: benchmark
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    shm_size: 2GB
+
+volumes:
+  pg_data:

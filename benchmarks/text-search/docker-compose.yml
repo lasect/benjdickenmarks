@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: benchmark-postgres
+    environment:
+      POSTGRES_USER: benchmark
+      POSTGRES_PASSWORD: benchmark
+      POSTGRES_DB: benchmark
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    shm_size: 2GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U benchmark"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  paradedb:
+    image: paradedb/paradedb:latest
+    container_name: benchmark-paradedb
+    environment:
+      POSTGRES_USER: benchmark
+      POSTGRES_PASSWORD: benchmark
+      POSTGRES_DB: benchmark
+    ports:
+      - "5433:5432"
+    volumes:
+      - paradedb_data:/var/lib/postgresql/data
+    shm_size: 2GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -p 5432 -U benchmark"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: benchmark-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    mem_limit: 2g
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: benchmark-meilisearch
+    environment:
+      MEILI_MASTER_KEY: benchmark
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili_data:/meili_data
+    mem_limit: 1g
+
+volumes:
+  pg_data:
+  paradedb_data:
+  es_data:
+  meili_data:
